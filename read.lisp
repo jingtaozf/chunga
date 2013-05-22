@@ -59,7 +59,7 @@ but expected ~:[a member of ~S~;~S~]."
 (defun separatorp (char)
   "Returns true if the Lisp character CHAR is a separator
 according to RFC 2616."
-  (find char #.(format nil " ()<>@,;:\\\"/[]?={}~C" #\Tab)
+  (find char #.(format nil " ,;~C" #\Tab)
         :test #'char=))
 
 (defun whitespacep (char)
