@@ -209,7 +209,7 @@ characters is seen.  This character is returned \(or NIL in case
 of END-OF-FILE)."
   (loop for char = (peek-char* stream nil)
         while (and char (whitespacep char))
-        do (read-char* stream)
+        do (read-char* stream nil)
         finally (return char)))
 
 (defun read-token (stream)
@@ -266,7 +266,10 @@ internally."
   (skip-whitespace stream)
   (let ((name (if cookie-syntax
                 (read-cookie-value stream :separators "=;")
-                (read-token stream))))
+                (with-output-to-string (out)
+                  (loop for char = (peek-char* stream)
+                        while (and char (not (find char '(#\= #\Space #\Tab #\, #\;))))
+                        do (write-char (read-char* stream) out))))))
     (skip-whitespace stream)
     (cons name
           (when (or value-required-p
