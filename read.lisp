@@ -268,7 +268,7 @@ internally."
                 (read-cookie-value stream :separators "=;")
                 (with-output-to-string (out)
                   (loop for char = (peek-char* stream)
-                        while (and char (not (find char '(#\= #\Space #\Tab #\, #\;))))
+                        while (and char (not (find char '(#\= #\Space #\Tab #\, #\;) :test #'char=)))
                         do (write-char (read-char* stream) out))))))
     (skip-whitespace stream)
     (cons name
