@@ -271,14 +271,15 @@ internally."
                         while (and char (not (find char '(#\= #\Space #\Tab #\, #\;) :test #'char=)))
                         do (write-char (read-char* stream) out))))))
     (skip-whitespace stream)
-    (cons name
-          (when (or value-required-p
-                    (eql (peek-char* stream nil) #\=))
-            (assert-char stream #\=)
-            (skip-whitespace stream)
-            (cond (cookie-syntax (read-cookie-value stream))
-                  ((char= (peek-char* stream) #\") (read-quoted-string stream))
-                  (t (read-token stream)))))))
+    (unless (eql (peek-char* stream nil) #\;); skip illegal name value pair.
+      (cons name
+            (when (or value-required-p
+                      (eql (peek-char* stream nil) #\=))
+              (assert-char stream #\=)
+              (skip-whitespace stream)
+              (cond (cookie-syntax (read-cookie-value stream))
+                    ((char= (peek-char* stream) #\") (read-quoted-string stream))
+                    (t (read-token stream))))))))
 
 (defun read-name-value-pairs (stream &key (value-required-p t) cookie-syntax)
   "Uses READ-NAME-VALUE-PAIR to read and return an alist of
